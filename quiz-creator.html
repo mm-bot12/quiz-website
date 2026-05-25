@@ -1008,8 +1008,8 @@ Where "answer" is the index (0-3) of the correct option. Make sure distractors a
         body: JSON.stringify({
           contents: [{ parts }],
           generationConfig: { 
-            temperature: 0.7, 
-            maxOutputTokens: 4096,
+            temperature: 0.3, 
+            maxOutputTokens: 8192,
             responseMimeType: "application/json",
             responseSchema: {
               type: "ARRAY",
@@ -1022,7 +1022,8 @@ Where "answer" is the index (0-3) of the correct option. Make sure distractors a
                     items: { type: "STRING" }
                   },
                   answer: { type: "INTEGER" }
-                }
+                },
+required: ["question", "options", "answer"] 
               }
             }
           }
