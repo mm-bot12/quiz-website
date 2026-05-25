@@ -142,3 +142,43 @@ p:hover::after {
   font-size: 1.4rem;
   text-shadow: 0 0 15px rgba(255, 71, 87, 0.8);
 }
+/* ==========================================
+   5. Futuristic Button Styles
+   ========================================== */
+
+.creator-btn {
+  margin-top: 40px;
+  padding: 12px 30px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #00f2fe;
+  background: transparent;
+  border: 2px solid #4facfe;
+  border-radius: 30px;
+  cursor: pointer;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  position: relative;
+  transition: all 0.4s ease;
+  box-shadow: 0 0 10px rgba(79, 172, 254, 0.2);
+  
+  /* Matches the general floating feel */
+  animation: float 6s ease-in-out infinite;
+  animation-delay: 1s; /* Slight delay so it doesn't bob at the exact same time as the title */
+}
+
+/* Hover Effects */
+.creator-btn:hover {
+  color: #ffffff;
+  background: linear-gradient(45deg, #00f2fe, #4facfe);
+  border-color: transparent;
+  box-shadow: 0 0 25px rgba(0, 242, 254, 0.6), 
+              0 0 50px rgba(79, 172, 254, 0.4);
+  transform: translateY(-3px) scale(1.05);
+}
+
+/* Click Effect */
+.creator-btn:active {
+  transform: translateY(1px) scale(0.98);
+  box-shadow: 0 0 15px rgba(0, 242, 254, 0.4);
+}
