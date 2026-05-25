@@ -44,25 +44,32 @@
         alert("Access Denied! সিলেবাস শেষ না করে এখানে কী? ❌");
       }
     }
-    function startExamSequence() {
-      const overlay = document.getElementById('cinema-overlay');
-      const countdownEl = document.getElementById('countdown');
-      
-      // Instantly blacks out the whole window
-      overlay.classList.add('active');
-      
-      let timeLeft = 10;
-      const timer = setInterval(() => {
-        timeLeft--;
-        countdownEl.textContent = timeLeft;
-        
-        if (timeLeft <= 0) {
-          clearInterval(timer);
-          window.location.href = "exam.html";
-        }
-      }, 1000);
+   function startExamSequence() {
+  // Ask the student for their specific exam link
+  const examLink = prompt("Please paste your Exam Link here:");
+  
+  if (!examLink || !examLink.includes("exam.html?d=")) {
+    alert("Invalid link! You need the exact link provided by your teacher.");
+    return;
+  }
+
+  const overlay = document.getElementById('cinema-overlay');
+  const countdownEl = document.getElementById('countdown');
+  
+  overlay.classList.add('active');
+  
+  let timeLeft = 10;
+  const timer = setInterval(() => {
+    timeLeft--;
+    countdownEl.textContent = timeLeft;
+    
+    if (timeLeft <= 0) {
+      clearInterval(timer);
+      // Redirect to the pasted link instead of the blank exam.html
+      window.location.href = examLink; 
     }
-  </script>
+  }, 1000);
+}  </script>
 </body>
   
 </html>
