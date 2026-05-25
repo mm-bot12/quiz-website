@@ -182,3 +182,148 @@ p:hover::after {
   transform: translateY(1px) scale(0.98);
   box-shadow: 0 0 15px rgba(0, 242, 254, 0.4);
 }
+
+/* ==========================================
+   4. Pure Dark Whole-Page Overlay & Batman
+   ========================================== */
+.cinema-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #000000; /* Complete pitch black darkness */
+  z-index: 99999;     /* Sits on top of every single layer */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease-in;
+}
+
+/* Instantly triggers complete blackpage takeover */
+.cinema-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.batman-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Building Batman's head outline structure */
+.batman-cowl {
+  position: relative;
+  width: 260px;
+  height: 200px;
+  margin-bottom: 20px;
+}
+
+.ears {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  position: absolute;
+  top: -40px;
+}
+
+/* Sharp stylized ears targeting a premium geometric look */
+.ear {
+  width: 35px;
+  height: 70px;
+  background: #0d0d13;
+}
+.left-ear-point {
+  clip-path: polygon(100% 0, 0% 100%, 100% 100%);
+}
+.right-ear-point {
+  clip-path: polygon(0 0, 0 100%, 100% 100%);
+}
+
+.batman-mask {
+  width: 100%;
+  height: 100%;
+  background: #0d0d13; /* Subtle silhouette dark gray contrast against pitch black */
+  border-radius: 20px 20px 60px 60px;
+  clip-path: polygon(0 0, 100% 0, 85% 75%, 50% 100%, 15% 75%);
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  padding-top: 50px;
+}
+
+/* The Eyes (Initially closed/blacked out) */
+.eye {
+  width: 65px;
+  height: 24px;
+  background: #000000;
+  transition: all 0.4s ease;
+}
+.left-eye {
+  clip-path: polygon(0% 0%, 100% 65%, 100% 100%, 0% 35%);
+}
+.right-eye {
+  clip-path: polygon(0% 65%, 100% 0%, 100% 35%, 0% 100%);
+}
+
+/* When active, eyes open into neon glowing yellow */
+.cinema-overlay.active .eye {
+  animation: openAndGlow 2s forwards;
+  animation-delay: 0.6s;
+}
+
+/* Porsche-inspired wide tracker font */
+.porsche-text {
+  font-family: 'Syncopate', sans-serif;
+  font-size: 1.8rem;
+  font-weight: 700;
+  letter-spacing: 14px;
+  color: #ffffff;
+  opacity: 0;
+  margin-top: 30px;
+  transform: scale(0.95);
+  text-align: center;
+}
+.cinema-overlay.active .porsche-text {
+  opacity: 0.9;
+  transform: scale(1);
+  transition: all 0.8s ease;
+  transition-delay: 1.5s;
+}
+
+/* Countdown Display */
+.countdown-num {
+  font-family: 'Syncopate', sans-serif;
+  font-size: 3.5rem;
+  color: #ffea00;
+  margin-top: 15px;
+  opacity: 0;
+  text-shadow: 0 0 25px rgba(255, 234, 0, 0.7);
+}
+.cinema-overlay.active .countdown-num {
+  opacity: 1;
+  transition: opacity 0.4s ease;
+  transition-delay: 2s;
+}
+
+/* ==========================================
+   Keyframes
+   ========================================== */
+@keyframes openAndGlow {
+  0% {
+    background: #000000;
+    filter: drop-shadow(0 0 0 transparent);
+  }
+  40% {
+    background: #ffcc00;
+    filter: drop-shadow(0 0 8px #ffcc00);
+  }
+  100% {
+    background: #fff200;
+    filter: drop-shadow(0 0 20px #ffea00) drop-shadow(0 0 40px #ffcc00);
+  }
+}
