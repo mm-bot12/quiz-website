@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Quiz Website</title>
   <link rel="stylesheet" href="style.css">
 
@@ -9,5 +10,22 @@
 <body>
   <h1>Welcome to My Quiz!</h1>
   <p data-hover="শা*, তোর সিলেবাস শেষ হইছে?">First commit test page.</p>
+  <button class="creator-btn" onclick="checkPasskey()">Create Quiz</button>
+
+  <script>
+    function checkPasskey() {
+      // Prompt user for the key
+      const password = prompt("Enter the Secret Passkey to access the creator page:");
+      
+      if (password === "maimuna is the best") {
+        alert("Access Granted! Welcome, Boss. 😎");
+        window.location.href = "quiz-creator.html";
+      } else if (password !== null) {
+        // If they typed the wrong thing
+        alert("Access Denied! সিলেবাস শেষ না করে এখানে কী? ❌");
+      }
+    }
+  </script>
 </body>
+  
 </html>
