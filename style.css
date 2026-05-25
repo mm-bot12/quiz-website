@@ -111,3 +111,34 @@ body::before {
     text-shadow: 0 0 12px rgba(160, 160, 192, 0.6);
   }
 }
+/* ==========================================
+   4. Secret Hover Message Trick
+   ========================================== */
+
+p {
+  position: relative;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+/* When hovering, hide the original text */
+p:hover {
+  color: transparent; 
+}
+
+/* When hovering, reveal the secret Bengali message */
+p:hover::after {
+  content: attr(data-hover); /* Pulls text from the HTML data-hover attribute */
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 100vw; /* Ensures the text doesn't wrap awkwardly */
+  text-align: center;
+  
+  /* Styling for the aggressive message */
+  color: #ff4757; /* Aggressive neon red/pink */
+  font-weight: bold;
+  font-size: 1.4rem;
+  text-shadow: 0 0 15px rgba(255, 71, 87, 0.8);
+}
