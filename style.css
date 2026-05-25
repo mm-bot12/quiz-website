@@ -327,3 +327,62 @@ p:hover::after {
     filter: drop-shadow(0 0 20px #ffea00) drop-shadow(0 0 40px #ffcc00);
   }
 }
+/* ==========================================
+   3. Buttons Layout & Aesthetic Custom Styling
+   ========================================== */
+
+/* Overrides default browser behaviors and aligns buttons perfectly */
+.creator-btn, .exam-btn {
+  padding: 14px 35px;
+  font-size: 1.1rem;
+  background: transparent;
+  cursor: pointer;
+  outline: none;
+  border-radius: 50px; /* Gives both buttons the same high-end pill shape */
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Left Button: Neon Cyan/Blue */
+.creator-btn {
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 600;
+  color: #00f2fe;
+  border: 2px solid #4facfe;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  animation-delay: 0.5s;
+  box-shadow: 0 0 15px rgba(79, 172, 254, 0.15);
+}
+
+.creator-btn:hover {
+  color: #ffffff;
+  background: linear-gradient(45deg, #00f2fe, #4facfe);
+  border-color: transparent;
+  box-shadow: 0 0 25px rgba(0, 242, 254, 0.6), 0 0 50px rgba(79, 172, 254, 0.3);
+  transform: translateY(-4px) scale(1.03);
+}
+
+/* Right Button: Ultra-Aesthetic Gold/Amber Bangla Layout */
+.exam-btn {
+  font-family: 'Noto Serif Bengali', 'Georgia', serif; /* Elegant serif look */
+  font-weight: 600;
+  color: #ffcc00; /* Warm gold text */
+  border: 2px solid #ffaa00; /* Amber border line */
+  letter-spacing: 0.5px;
+  animation-delay: 1.5s; /* Delays bobbing step so it moves naturally against the other button */
+  box-shadow: 0 0 15px rgba(255, 170, 0, 0.15);
+}
+
+.exam-btn:hover {
+  color: #000000; /* Flips dark for visibility inside bright glow */
+  background: linear-gradient(45deg, #ffe600, #ffaa00);
+  border-color: transparent;
+  box-shadow: 0 0 25px rgba(255, 230, 0, 0.6), 0 0 50px rgba(255, 170, 0, 0.4);
+  transform: translateY(-4px) scale(1.03);
+}
+
+/* Click Active effects for both */
+.creator-btn:active, .exam-btn:active {
+  transform: translateY(-1px) scale(0.98);
+}
