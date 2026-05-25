@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Creator — Teacher Panel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg-void:       #080b12;
+    --bg-deep:       #0d1117;
+    --bg-surface:    #111827;
+    --bg-raised:     #1a2235;
+    --bg-hover:      #1f2d44;
+    --border-dim:    rgba(99,120,160,0.18);
+    --border-glow:   rgba(99,202,255,0.35);
+    --accent-cyan:   #3ecfff;
+    --accent-violet: #a78bfa;
+    --accent-green:  #34d399;
+    --accent-amber:  #fbbf24;
+    --accent-red:    #f87171;
+    --text-primary:  #e8edf5;
+    --text-secondary:#8a9bc0;
+    --text-muted:    #4a5a78;
+    --font-display:  'Syne', sans-serif;
+    --font-body:     'DM Sans', sans-serif;
+    --font-mono:     'JetBrains Mono', monospace;
+    --radius-sm:     6px;
+    --radius-md:     10px;
+    --radius-lg:     16px;
+    --radius-xl:     22px;
+    --transition:    all 0.22s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--bg-void);
+    color: var(--text-primary);
+    min-height: 100vh;
+    font-size: 15px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* Ambient background grid */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(62,207,255,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(62,207,255,0.025) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Ambient glow orbs */
+  body::after {
+    content: '';
+    position: fixed;
+    top: -200px; left: -200px;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(62,207,255,0.06) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── HEADER ── */
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(8,11,18,0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border-dim);
+    padding: 0 2rem;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .header-logo {
+    width: 36px; height: 36px;
+    border-radius: var(--radius-md);
+    background: linear-gradient(135deg, #3ecfff22, #a78bfa22);
+    border: 1px solid var(--border-glow);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+
+  header h1 {
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    background: linear-gradient(90deg, var(--accent-cyan), var(--accent-violet));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .header-badge {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    background: rgba(62,207,255,0.1);
+    border: 1px solid rgba(62,207,255,0.25);
+    color: var(--accent-cyan);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  /* ── LAYOUT ── */
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 820px;
+    margin: 2.5rem auto;
+    padding: 0 1.25rem 4rem;
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-dim);
+    border-radius: var(--radius-xl);
+    padding: 1.75rem 2rem;
+    margin-bottom: 1.25rem;
+    position: relative;
+    overflow: hidden;
+    transition: var(--transition);
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(62,207,255,0.4), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .card:hover::before { opacity: 1; }
+  .card:hover { border-color: rgba(99,120,160,0.3); }
+
+  .card h2 {
+    font-family: var(--font-display);
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .card h2 .icon-badge {
+    width: 28px; height: 28px;
+    border-radius: var(--radius-sm);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  .icon-badge.cyan  { background: rgba(62,207,255,0.12); border: 1px solid rgba(62,207,255,0.2); }
+  .icon-badge.violet{ background: rgba(167,139,250,0.12); border: 1px solid rgba(167,139,250,0.2); }
+  .icon-badge.green { background: rgba(52,211,153,0.12); border: 1px solid rgba(52,211,153,0.2); }
+  .icon-badge.amber { background: rgba(251,191,36,0.12); border: 1px solid rgba(251,191,36,0.2); }
+
+  /* ── LABELS & INPUTS ── */
+  label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+    margin-top: 16px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    font-family: var(--font-mono);
+  }
+
+  label:first-of-type { margin-top: 0; }
+
+  input, textarea, select {
+    width: 100%;
+    padding: 10px 14px;
+    background: var(--bg-raised);
+    border: 1px solid var(--border-dim);
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    font-family: var(--font-body);
+    color: var(--text-primary);
+    transition: var(--transition);
+    appearance: none;
+    -webkit-appearance: none;
+  }
+
+  input::placeholder, textarea::placeholder {
+    color: var(--text-muted);
+    font-style: italic;
+  }
+
+  input:focus, textarea:focus, select:focus {
+    outline: none;
+    border-color: var(--accent-cyan);
+    background: var(--bg-hover);
+    box-shadow: 0 0 0 3px rgba(62,207,255,0.08);
+  }
+
+  input[type="password"]:focus {
+    border-color: var(--accent-violet);
+    box-shadow: 0 0 0 3px rgba(167,139,250,0.08);
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 160px;
+    line-height: 1.7;
+  }
+
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238a9bc0' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 36px;
+    cursor: pointer;
+  }
+
+  select option { background: var(--bg-surface); color: var(--text-primary); }
+
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+  /* ── BUTTONS ── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 22px;
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    font-weight: 500;
+    font-family: var(--font-body);
+    cursor: pointer;
+    transition: var(--transition);
+    letter-spacing: 0.01em;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.2s;
+    background: rgba(255,255,255,0.06);
+  }
+  .btn:hover::after { opacity: 1; }
+  .btn:active { transform: scale(0.98); }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #2ea8d5, #3ecfff);
+    color: #080b12;
+    font-weight: 600;
+    box-shadow: 0 4px 20px rgba(62,207,255,0.25);
+  }
+  .btn-primary:hover { box-shadow: 0 6px 28px rgba(62,207,255,0.4); transform: translateY(-1px); }
+  .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; transform: none; box-shadow: none; }
+
+  .btn-green {
+    background: linear-gradient(135deg, #059669, #34d399);
+    color: #080b12;
+    font-weight: 600;
+    box-shadow: 0 4px 20px rgba(52,211,153,0.2);
+  }
+  .btn-green:hover { box-shadow: 0 6px 28px rgba(52,211,153,0.35); transform: translateY(-1px); }
+
+  .btn-ghost {
+    background: var(--bg-raised);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-dim);
+  }
+  .btn-ghost:hover { border-color: rgba(99,120,160,0.4); color: var(--text-primary); }
+
+  .btn-copy {
+    background: var(--bg-raised);
+    color: var(--accent-cyan);
+    border: 1px solid rgba(62,207,255,0.2);
+    font-family: var(--font-mono);
+    font-size: 13px;
+  }
+  .btn-copy:hover { background: rgba(62,207,255,0.08); border-color: rgba(62,207,255,0.4); }
+
+  /* ── STATUS ── */
+  #status {
+    padding: 12px 16px;
+    border-radius: var(--radius-md);
+    font-size: 13px;
+    margin-top: 14px;
+    display: none;
+    font-family: var(--font-mono);
+    letter-spacing: 0.01em;
+    border: 1px solid transparent;
+  }
+
+  .status-loading { background: rgba(62,207,255,0.07); color: var(--accent-cyan); border-color: rgba(62,207,255,0.2); }
+  .status-error   { background: rgba(248,113,113,0.08); color: var(--accent-red); border-color: rgba(248,113,113,0.25); }
+  .status-success { background: rgba(52,211,153,0.07); color: var(--accent-green); border-color: rgba(52,211,153,0.2); }
+
+  /* ── SETUP STEPS ── */
+  .steps { counter-reset: step; display: flex; flex-direction: column; gap: 14px; }
+
+  .step {
+    counter-increment: step;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    padding: 14px 16px;
+    background: var(--bg-raised);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-dim);
+    transition: var(--transition);
+  }
+  .step:hover { border-color: rgba(62,207,255,0.2); background: var(--bg-hover); }
+
+  .step::before {
+    content: counter(step);
+    background: linear-gradient(135deg, rgba(62,207,255,0.2), rgba(167,139,250,0.2));
+    border: 1px solid rgba(62,207,255,0.3);
+    color: var(--accent-cyan);
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    font-family: var(--font-mono);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .step p {
+    font-size: 13.5px;
+    color: var(--text-secondary);
+    line-height: 1.65;
+  }
+
+  .step p strong { color: var(--text-primary); font-weight: 500; }
+
+  .step p a {
+    color: var(--accent-cyan);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(62,207,255,0.3);
+    transition: var(--transition);
+  }
+  .step p a:hover { border-color: var(--accent-cyan); color: #fff; }
+
+  /* ── API NOTE ── */
+  .api-note {
+    background: rgba(251,191,36,0.06);
+    border: 1px solid rgba(251,191,36,0.2);
+    border-radius: var(--radius-md);
+    padding: 12px 16px;
+    font-size: 13px;
+    color: var(--accent-amber);
+    margin-top: 14px;
+    font-family: var(--font-mono);
+    line-height: 1.6;
+  }
+
+  /* ── QUESTION PREVIEW ── */
+  .questions-preview { margin-top: 0.5rem; display: flex; flex-direction: column; gap: 10px; }
+
+  .q-item {
+    border: 1px solid var(--border-dim);
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    background: var(--bg-raised);
+    transition: var(--transition);
+  }
+  .q-item:hover { border-color: rgba(99,120,160,0.3); }
+
+  .q-num-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.06em;
+    margin-bottom: 6px;
+  }
+
+  .q-item .q-text {
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 10px;
+    color: var(--text-primary);
+    line-height: 1.55;
+  }
+
+  .q-item .opts { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+
+  .opt {
+    font-size: 12.5px;
+    padding: 6px 10px;
+    border-radius: var(--radius-sm);
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border-dim);
+    color: var(--text-secondary);
+    font-family: var(--font-body);
+  }
+
+  .opt.correct {
+    background: rgba(52,211,153,0.1);
+    border-color: rgba(52,211,153,0.3);
+    color: var(--accent-green);
+    font-weight: 500;
+  }
+
+  /* ── LINK BOX ── */
+  .link-box {
+    background: rgba(52,211,153,0.05);
+    border: 1px solid rgba(52,211,153,0.2);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem 1.5rem;
+    margin-top: 1.25rem;
+  }
+
+  .link-box-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--accent-green);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .link-url {
+    font-size: 12px;
+    font-family: var(--font-mono);
+    color: var(--text-secondary);
+    word-break: break-all;
+    background: var(--bg-void);
+    padding: 10px 14px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-dim);
+    margin-bottom: 12px;
+    line-height: 1.7;
+  }
+
+  .link-warning {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border-dim);
+    line-height: 1.6;
+  }
+
+  /* ── TAG ── */
+  .tag {
+    display: inline-block;
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: rgba(167,139,250,0.12);
+    border: 1px solid rgba(167,139,250,0.25);
+    color: var(--accent-violet);
+    font-family: var(--font-mono);
+    margin-left: 4px;
+    font-weight: 500;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  /* ── SPINNER ── */
+  .spinner {
+    display: inline-block;
+    width: 13px; height: 13px;
+    border: 2px solid rgba(8,11,18,0.3);
+    border-top: 2px solid rgba(8,11,18,0.9);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── DIVIDER ── */
+  .section-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0.5rem 0 1.25rem;
+  }
+
+  .section-divider span {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  .section-divider::before, .section-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border-dim);
+  }
+
+  /* ── FOOTER ── */
+  .page-footer {
+    text-align: center;
+    padding: 1rem;
+    font-size: 12px;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    letter-spacing: 0.04em;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .card { animation: fadeUp 0.45s ease both; }
+  .card:nth-child(1) { animation-delay: 0.05s; }
+  .card:nth-child(2) { animation-delay: 0.12s; }
+  .card:nth-child(3) { animation-delay: 0.19s; }
+  .card:nth-child(4) { animation-delay: 0.26s; }
+  .card:nth-child(5) { animation-delay: 0.33s; }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg-void); }
+  ::-webkit-scrollbar-thumb { background: rgba(99,120,160,0.3); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(99,120,160,0.5); }
+
+  /* ── IMAGE UPLOAD ZONE ── */
+  .upload-zone {
+    border: 1.5px dashed rgba(62,207,255,0.25);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: var(--transition);
+    background: rgba(62,207,255,0.03);
+    position: relative;
+    margin-top: 6px;
+  }
+  .upload-zone:hover, .upload-zone.drag-over {
+    border-color: var(--accent-cyan);
+    background: rgba(62,207,255,0.07);
+  }
+  .upload-zone input[type="file"] {
+    position: absolute; inset: 0;
+    opacity: 0; cursor: pointer;
+    width: 100%; height: 100%;
+    border: none; background: none; padding: 0;
+    box-shadow: none;
+  }
+  .upload-zone input[type="file"]:focus { box-shadow: none; }
+  .upload-icon {
+    font-size: 28px; margin-bottom: 8px; display: block;
+  }
+  .upload-label {
+    font-size: 13.5px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+  .upload-label strong { color: var(--accent-cyan); font-weight: 500; }
+  .upload-sub {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 5px;
+  }
+
+  /* Image thumbnails */
+  .img-preview-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 14px;
+  }
+  .img-thumb {
+    position: relative;
+    width: 90px; height: 90px;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    border: 1px solid var(--border-dim);
+    background: var(--bg-raised);
+    flex-shrink: 0;
+    animation: fadeUp 0.3s ease both;
+  }
+  .img-thumb img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .img-thumb-name {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    background: rgba(8,11,18,0.82);
+    font-size: 9px;
+    font-family: var(--font-mono);
+    color: var(--text-secondary);
+    padding: 3px 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .img-thumb-remove {
+    position: absolute;
+    top: 4px; right: 4px;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: rgba(248,113,113,0.85);
+    border: none;
+    color: #fff;
+    font-size: 10px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    line-height: 1;
+    transition: var(--transition);
+    padding: 0;
+  }
+  .img-thumb-remove:hover { background: var(--accent-red); transform: scale(1.1); }
+
+  .img-count-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--accent-violet);
+    background: rgba(167,139,250,0.1);
+    border: 1px solid rgba(167,139,250,0.2);
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-top: 10px;
+  }
+
+  /* ── AI INSTRUCTIONS TEXTAREA ── */
+  .ai-instructions-wrap { position: relative; margin-top: 6px; }
+  .ai-instructions-wrap textarea {
+    min-height: 90px;
+    padding-right: 14px;
+    font-size: 13.5px;
+  }
+  .char-count {
+    position: absolute;
+    bottom: 10px; right: 12px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-muted);
+    pointer-events: none;
+  }
+  .prompt-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 10px;
+  }
+  .chip {
+    font-size: 12px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    background: var(--bg-raised);
+    border: 1px solid var(--border-dim);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: var(--transition);
+    font-family: var(--font-body);
+    white-space: nowrap;
+  }
+  .chip:hover {
+    border-color: rgba(167,139,250,0.4);
+    color: var(--accent-violet);
+    background: rgba(167,139,250,0.07);
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    .row { grid-template-columns: 1fr; }
+    .card { padding: 1.25rem 1.25rem; }
+    header { padding: 0 1.25rem; }
+    .q-item .opts { grid-template-columns: 1fr; }
+    .img-thumb { width: 72px; height: 72px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <div class="header-logo">📋</div>
+    <h1>Quiz Creator</h1>
+  </div>
+  <span class="header-badge">Teacher Panel</span>
+</header>
+
+<div class="container">
+
+  <!-- Setup Instructions -->
+  <div class="card">
+    <h2><span class="icon-badge cyan">⚙️</span> One-time Setup</h2>
+    <div class="steps">
+      <div class="step">
+        <p><strong>Get Gemini API key (free):</strong> Go to <a href="https://aistudio.google.com/app/apikey" target="_blank">aistudio.google.com</a> → Create API key → paste it below</p>
+      </div>
+      <div class="step">
+        <p><strong>Set up EmailJS (free, 200 emails/month):</strong> Go to <a href="https://www.emailjs.com" target="_blank">emailjs.com</a> → Sign up free → Create a service (Gmail) → Create an email template → Note your Service ID, Template ID, and Public Key</p>
+      </div>
+      <div class="step">
+        <p><strong>Host both HTML files free:</strong> Upload to <a href="https://pages.github.com" target="_blank">GitHub Pages</a> or drag-drop at <a href="https://app.netlify.com/drop" target="_blank">Netlify Drop</a> — you get a link like <em>yourname.netlify.app/exam.html</em></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- API Keys -->
+  <div class="card">
+    <h2><span class="icon-badge violet">🔑</span> API Configuration</h2>
+
+    <div class="section-divider"><span>Gemini AI</span></div>
+    <label>Gemini API Key</label>
+    <input type="password" id="geminiKey" placeholder="AIza..." oninput="saveConfig()">
+
+    <div class="section-divider" style="margin-top:1.25rem"><span>Email Results</span></div>
+    <label>Your Email (to receive results)</label>
+    <input type="email" id="teacherEmail" placeholder="teacher@gmail.com" oninput="saveConfig()">
+    <label>EmailJS Public Key</label>
+    <input type="password" id="ejsPublicKey" placeholder="your_public_key" oninput="saveConfig()">
+    <label>EmailJS Service ID</label>
+    <input type="text" id="ejsServiceId" placeholder="service_xxxxxxx" oninput="saveConfig()">
+    <label>EmailJS Template ID</label>
+    <input type="text" id="ejsTemplateId" placeholder="template_xxxxxxx" oninput="saveConfig()">
+
+    <div class="api-note">💡 Keys are saved in your browser only. They are embedded in the exam link — students don't need to configure anything.</div>
+  </div>
+
+  <!-- Exam Settings -->
+  <div class="card">
+    <h2><span class="icon-badge amber">📝</span> Exam Settings</h2>
+    <label>Exam Title</label>
+    <input type="text" id="examTitle" placeholder="e.g. Biology Chapter 3 – Cell Division">
+    <div class="row" style="margin-top:1rem">
+      <div>
+        <label>Number of Questions</label>
+        <input type="number" id="numQuestions" value="10" min="1" max="30">
+      </div>
+      <div>
+        <label>Time Limit (minutes)</label>
+        <input type="number" id="timeLimit" value="15" min="1" max="180">
+      </div>
+    </div>
+    <label>Difficulty Level</label>
+    <select id="difficulty">
+      <option value="easy">Easy</option>
+      <option value="medium" selected>Medium</option>
+      <option value="hard">Hard</option>
+    </select>
+  </div>
+
+  <!-- Book Content -->
+  <div class="card">
+    <h2><span class="icon-badge green">📖</span> Source Material</h2>
+
+    <label>Paste book pages, notes, or any text</label>
+    <textarea id="bookContent" placeholder="Paste the chapter or topic content here. The more detailed the text, the better the questions Gemini will generate..."></textarea>
+
+    <label style="margin-top:18px">Upload images of book pages (JPEG, PNG, WebP, GIF)</label>
+    <div class="upload-zone" id="uploadZone"
+      ondragover="handleDragOver(event)"
+      ondragleave="handleDragLeave(event)"
+      ondrop="handleDrop(event)">
+      <input type="file" id="imageInput" accept="image/jpeg,image/png,image/webp,image/gif"
+        multiple onchange="handleFiles(this.files)">
+      <span class="upload-icon">🖼️</span>
+      <div class="upload-label"><strong>Click to upload</strong> or drag &amp; drop images here</div>
+      <div class="upload-sub">JPEG · PNG · WebP · GIF &nbsp;·&nbsp; up to 10 images &nbsp;·&nbsp; Gemini Vision reads them</div>
+    </div>
+    <div class="img-preview-grid" id="imgPreviewGrid"></div>
+    <div id="imgCountBadge" style="display:none" class="img-count-badge">
+      <span>🖼</span><span id="imgCountText">0 images attached</span>
+    </div>
+
+    <label style="margin-top:20px">Additional instructions for AI</label>
+    <div class="ai-instructions-wrap">
+      <textarea id="aiInstructions"
+        placeholder="e.g. Focus on definitions and key terms. Include tricky distractors. Avoid questions about specific dates. Prioritise diagrams if images are attached."
+        oninput="updateCharCount(this)" maxlength="800"></textarea>
+      <span class="char-count" id="charCount">0 / 800</span>
+    </div>
+    <div class="prompt-chips" id="promptChips">
+      <button class="chip" onclick="addChip('Focus on key definitions and terminology')">+ Key definitions</button>
+      <button class="chip" onclick="addChip('Include tricky distractors to challenge students')">+ Tricky distractors</button>
+      <button class="chip" onclick="addChip('Avoid questions about specific dates or years')">+ Avoid dates</button>
+      <button class="chip" onclick="addChip('Prioritise concepts visible in the uploaded images')">+ Use images</button>
+      <button class="chip" onclick="addChip('Mix conceptual and factual questions equally')">+ Mix types</button>
+      <button class="chip" onclick="addChip('Each question must have exactly one unambiguously correct answer')">+ Unambiguous answers</button>
+    </div>
+
+    <div style="margin-top:1.5rem">
+      <button class="btn btn-primary" onclick="generateQuestions()" id="genBtn">
+        ✨ Generate Questions with Gemini AI
+      </button>
+    </div>
+    <div id="status"></div>
+  </div>
+
+  <!-- Questions Preview -->
+  <div class="card" id="previewCard" style="display:none">
+    <h2>✅ Generated Questions <span id="qCount" class="tag"></span></h2>
+    <div class="questions-preview" id="questionsPreview"></div>
+    <div style="margin-top:1.25rem;display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn btn-green" onclick="createExamLink()" id="linkBtn">🔗 Create Exam Link</button>
+      <button class="btn btn-ghost" onclick="generateQuestions()">↺ Regenerate</button>
+    </div>
+    <div id="linkOutput"></div>
+  </div>
+
+</div>
+
+<div class="page-footer">Quiz Creator · Powered by Gemini AI · EmailJS</div>
+
+<script>
+let generatedQuestions = [];
+let uploadedImages = []; // [{name, mimeType, base64}]
+
+/* ── CONFIG ── */
+function saveConfig(){
+  localStorage.setItem('qc_gemini', document.getElementById('geminiKey').value);
+  localStorage.setItem('qc_teacherEmail', document.getElementById('teacherEmail').value);
+  localStorage.setItem('qc_ejsPubKey', document.getElementById('ejsPublicKey').value);
+  localStorage.setItem('qc_ejsSvcId', document.getElementById('ejsServiceId').value);
+  localStorage.setItem('qc_ejsTplId', document.getElementById('ejsTemplateId').value);
+}
+function loadConfig(){
+  document.getElementById('geminiKey').value = localStorage.getItem('qc_gemini')||'';
+  document.getElementById('teacherEmail').value = localStorage.getItem('qc_teacherEmail')||'';
+  document.getElementById('ejsPublicKey').value = localStorage.getItem('qc_ejsPubKey')||'';
+  document.getElementById('ejsServiceId').value = localStorage.getItem('qc_ejsSvcId')||'';
+  document.getElementById('ejsTemplateId').value = localStorage.getItem('qc_ejsTplId')||'';
+}
+
+/* ── STATUS ── */
+function showStatus(msg, type){
+  const el = document.getElementById('status');
+  el.textContent = msg;
+  el.className = 'status-' + type;
+  el.style.display = 'block';
+}
+
+/* ── CHAR COUNT ── */
+function updateCharCount(el){
+  document.getElementById('charCount').textContent = el.value.length + ' / 800';
+}
+
+/* ── PROMPT CHIPS ── */
+function addChip(text){
+  const el = document.getElementById('aiInstructions');
+  const cur = el.value.trim();
+  el.value = cur ? cur + '. ' + text : text;
+  updateCharCount(el);
+  el.focus();
+}
+
+/* ── IMAGE UPLOAD ── */
+function handleDragOver(e){
+  e.preventDefault();
+  document.getElementById('uploadZone').classList.add('drag-over');
+}
+function handleDragLeave(e){
+  document.getElementById('uploadZone').classList.remove('drag-over');
+}
+function handleDrop(e){
+  e.preventDefault();
+  document.getElementById('uploadZone').classList.remove('drag-over');
+  handleFiles(e.dataTransfer.files);
+}
+
+function handleFiles(files){
+  const allowed = ['image/jpeg','image/png','image/webp','image/gif'];
+  Array.from(files).forEach(file => {
+    if(!allowed.includes(file.type)){
+      alert(`"${file.name}" is not a supported image type. Please use JPEG, PNG, WebP, or GIF.`);
+      return;
+    }
+    if(uploadedImages.length >= 10){
+      alert('Maximum 10 images allowed.'); return;
+    }
+    if(file.size > 10 * 1024 * 1024){
+      alert(`"${file.name}" is too large. Max 10 MB per image.`); return;
+    }
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const dataUrl = ev.target.result;
+      const base64 = dataUrl.split(',')[1];
+      const id = Date.now() + '_' + Math.random().toString(36).slice(2);
+      uploadedImages.push({ id, name: file.name, mimeType: file.type, base64, dataUrl });
+      renderImagePreviews();
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function removeImage(id){
+  uploadedImages = uploadedImages.filter(img => img.id !== id);
+  renderImagePreviews();
+}
+
+function renderImagePreviews(){
+  const grid = document.getElementById('imgPreviewGrid');
+  const badge = document.getElementById('imgCountBadge');
+  const count = uploadedImages.length;
+
+  grid.innerHTML = uploadedImages.map(img => `
+    <div class="img-thumb">
+      <img src="${img.dataUrl}" alt="${img.name}">
+      <div class="img-thumb-name">${img.name}</div>
+      <button class="img-thumb-remove" onclick="removeImage('${img.id}')" title="Remove">✕</button>
+    </div>`).join('');
+
+  badge.style.display = count > 0 ? 'inline-flex' : 'none';
+  document.getElementById('imgCountText').textContent =
+    count + ' image' + (count !== 1 ? 's' : '') + ' attached — Gemini Vision will read ' + (count !== 1 ? 'them' : 'it');
+}
+
+/* ── GENERATE ── */
+async function generateQuestions(){
+  const apiKey  = document.getElementById('geminiKey').value.trim();
+  const content = document.getElementById('bookContent').value.trim();
+  const num     = document.getElementById('numQuestions').value;
+  const diff    = document.getElementById('difficulty').value;
+  const extra   = document.getElementById('aiInstructions').value.trim();
+
+  if(!apiKey){ showStatus('⚠ Please enter your Gemini API key first.','error'); return; }
+  if(!content && uploadedImages.length === 0){
+    showStatus('⚠ Please paste some text or upload at least one image.','error'); return;
+  }
+
+  const btn = document.getElementById('genBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Generating...';
+
+  const hasImages = uploadedImages.length > 0;
+  showStatus(
+    hasImages
+      ? `→ Sending ${uploadedImages.length} image(s) + text to Gemini Vision — this may take 15–30 seconds...`
+      : '→ Sending to Gemini AI — this may take 10–20 seconds...',
+    'loading'
+  );
+
+  const promptText = `You are an expert teacher creating an MCQ exam.
+${content ? `Based on the following text and${hasImages?' the attached images':''}` : 'Based on the attached images'}, generate exactly ${num} multiple choice questions at ${diff} difficulty level.
+${extra ? 'Additional instructions: ' + extra : ''}
+${content ? `\nText material:\n"""\n${content.substring(0, 10000)}\n"""` : ''}
+
+Return ONLY a valid JSON array. No markdown, no explanation. Format:
+[
+  {
+    "question": "Question text here?",
+    "options": ["Option A", "Option B", "Option C", "Option D"],
+    "answer": 0
+  }
+]
+Where "answer" is the index (0-3) of the correct option. Make sure distractors are plausible.`;
+
+  // Build parts array: text prompt + image inlines
+  const parts = [{ text: promptText }];
+  uploadedImages.forEach(img => {
+    parts.push({
+      inline_data: { mime_type: img.mimeType, data: img.base64 }
+    });
+  });
+
+  // Use gemini-1.5-flash (supports vision)
+  try {
+    const res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts }],
+          generationConfig: { temperature: 0.7, maxOutputTokens: 4096 }
+        })
+      }
+    );
+    const data = await res.json();
+    if(data.error) throw new Error(data.error.message);
+    let raw = data.candidates[0].content.parts[0].text.trim();
+    raw = raw.replace(/```json/g,'').replace(/```/g,'').trim();
+    const start = raw.indexOf('[');
+    const end   = raw.lastIndexOf(']');
+    if(start === -1 || end === -1) throw new Error('AI did not return a valid JSON array. Try again.');
+    generatedQuestions = JSON.parse(raw.substring(start, end + 1));
+    if(!Array.isArray(generatedQuestions) || !generatedQuestions.length) throw new Error('No questions parsed.');
+    renderPreview();
+    showStatus(
+      `✓ ${generatedQuestions.length} questions generated successfully${hasImages ? ' (from text + '+uploadedImages.length+' image'+(uploadedImages.length>1?'s':'')+')' : ''}.`,
+      'success'
+    );
+  } catch(e){
+    showStatus('✕ Error: ' + e.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '✨ Generate Questions with Gemini AI';
+  }
+}
+
+/* ── RENDER PREVIEW ── */
+function renderPreview(){
+  document.getElementById('previewCard').style.display = 'block';
+  document.getElementById('qCount').textContent = generatedQuestions.length + ' questions';
+  const container = document.getElementById('questionsPreview');
+  container.innerHTML = generatedQuestions.map((q,i) => {
+    const opts = q.options.map((o,j) =>
+      `<div class="opt ${j===q.answer?'correct':''}">${['A','B','C','D'][j]}. ${o}${j===q.answer?' ✓':''}</div>`
+    ).join('');
+    return `<div class="q-item">
+      <div class="q-num-label">Q${String(i+1).padStart(2,'0')}</div>
+      <div class="q-text">${q.question}</div>
+      <div class="opts">${opts}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('previewCard').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+/* ── CREATE EXAM LINK ── */
+function createExamLink(){
+  const title        = document.getElementById('examTitle').value.trim() || 'Exam';
+  const timeLimit    = parseInt(document.getElementById('timeLimit').value) || 15;
+  const teacherEmail = document.getElementById('teacherEmail').value.trim();
+  const ejsPubKey    = document.getElementById('ejsPublicKey').value.trim();
+  const ejsSvcId     = document.getElementById('ejsServiceId').value.trim();
+  const ejsTplId     = document.getElementById('ejsTemplateId').value.trim();
+
+  if(!teacherEmail){ showStatus('⚠ Please enter your email to receive results.','error'); return; }
+
+  const examData = { title, timeLimit, teacherEmail, ejsPubKey, ejsSvcId, ejsTplId, questions: generatedQuestions };
+  const encoded  = btoa(unescape(encodeURIComponent(JSON.stringify(examData))));
+  const examUrl  = `${window.location.origin}${window.location.pathname.replace('quiz-creator.html','exam.html')}?d=${encoded}`;
+
+  document.getElementById('linkOutput').innerHTML = `
+    <div class="link-box">
+      <div class="link-box-label">📎 Shareable Exam Link</div>
+      <div class="link-url" id="generatedLink">${examUrl}</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-copy" onclick="copyLink()">📋 Copy Link</button>
+        <button class="btn btn-ghost" onclick="testLink('${examUrl}')">🔍 Preview Exam</button>
+      </div>
+      <div class="link-warning">⚠ If using GitHub Pages / Netlify, replace the domain with your hosted URL. Both files must be in the same folder.</div>
+    </div>`;
+}
+
+function copyLink(){
+  navigator.clipboard.writeText(document.getElementById('generatedLink').textContent)
+    .then(() => alert('Link copied to clipboard!'));
+}
+function testLink(url){ window.open(url,'_blank'); }
+
+window.onload = loadConfig;
+</script>
+</body>
+</html>
