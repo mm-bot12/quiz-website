@@ -10,8 +10,27 @@
 <body>
   <h1>Welcome to My Quiz!</h1>
   <p data-hover="শা*, তোর সিলেবাস শেষ হইছে?">First commit test page.</p>
-  <button class="creator-btn" onclick="checkPasskey()">Create Quiz</button>
-
+  <div class="button-group">
+    <button class="creator-btn" onclick="checkPasskey()">Create Quiz</button>
+    
+    <button class="exam-btn" onclick="startExamSequence()">"আমি ছোট মানুষ"</button>
+  </div>
+<div id="cinema-overlay" class="cinema-overlay">
+    <div class="batman-container">
+      <div class="batman-cowl">
+        <div class="ears">
+          <div class="ear left-ear-point"></div>
+          <div class="ear right-ear-point"></div>
+        </div>
+        <div class="batman-mask">
+          <div class="eye left-eye"></div>
+          <div class="eye right-eye"></div>
+        </div>
+      </div>
+      <h2 class="porsche-text">GET READY</h2>
+      <div id="countdown" class="countdown-num">10</div>
+    </div>
+  </div>
   <script>
     function checkPasskey() {
       // Prompt user for the key
@@ -24,6 +43,24 @@
         // If they typed the wrong thing
         alert("Access Denied! সিলেবাস শেষ না করে এখানে কী? ❌");
       }
+    }
+    function startExamSequence() {
+      const overlay = document.getElementById('cinema-overlay');
+      const countdownEl = document.getElementById('countdown');
+      
+      // Instantly blacks out the whole window
+      overlay.classList.add('active');
+      
+      let timeLeft = 10;
+      const timer = setInterval(() => {
+        timeLeft--;
+        countdownEl.textContent = timeLeft;
+        
+        if (timeLeft <= 0) {
+          clearInterval(timer);
+          window.location.href = "exam.html";
+        }
+      }, 1000);
     }
   </script>
 </body>
