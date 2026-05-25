@@ -1007,8 +1007,25 @@ Where "answer" is the index (0-3) of the correct option. Make sure distractors a
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           contents: [{ parts }],
-          generationConfig: { temperature: 0.7, maxOutputTokens: 4096,
-            responseMimeType: "application/json" }
+          generationConfig: { 
+            temperature: 0.7, 
+            maxOutputTokens: 4096,
+            responseMimeType: "application/json",
+            responseSchema: {
+              type: "ARRAY",
+              items: {
+                type: "OBJECT",
+                properties: {
+                  question: { type: "STRING" },
+                  options: {
+                    type: "ARRAY",
+                    items: { type: "STRING" }
+                  },
+                  answer: { type: "INTEGER" }
+                }
+              }
+            }
+          }
         })
       }
     );
